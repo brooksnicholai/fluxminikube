@@ -1,0 +1,35 @@
+name: 'Hello World Action'
+description: 'A contrived example custom action that greets someone'
+author: 'Nicholai Brooks'
+
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+  greeting-style:
+    description: 'Style of greeting: casual or formal'
+    required: false
+    default: 'casual'
+
+outputs:
+  greeting-time:
+    description: 'The time the greeting was generated'
+    value: ${{ steps.set-time.outputs.time }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Print greeting
+      shell: bash
+      run: |
+        if [ "${{ inputs.greeting-style }}" = "formal" ]; then
+          echo "Good day, ${{ inputs.who-to-greet }}. It is a pleasure to make your acquaintance."
+        else
+          echo "Hey there, ${{ inputs.who-to-greet }}! 👋"
+        fi
+
+    - name: Set output time
+      id: set-time
+      shell: bash
+      run: echo "time=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
